@@ -1,5 +1,5 @@
-npx tiddlywiki wikisrc --init server
-
+# Starts wiki server for editing
 npx tiddlywiki wikisrc --listen
 
+# Builds wiki into single html file
 npx tiddlywiki wikisrc --build index
