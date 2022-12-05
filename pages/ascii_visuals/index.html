@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      html {
+        box-sizing: border-box;
+      }
+      *,
+      *:before,
+      *:after {
+        box-sizing: inherit;
+      }
+      body {
+        margin: auto;
+        text-align: center;
+        font-family: sans-serif;
+      }
+      #display {
+        font-size: 5px;
+        display: inline-block;
+        padding: 5px;
+        margin-top: 50px;
+      }
+
+      .CodeMirror {
+        margin: auto;
+        text-align: start;
+        /* border: 0.5px dotted lightgrey; */
+      }
+      button {
+        margin: 5px;
+      }
+      #snippets-bar {
+        position: absolute;
+        top: 0;
+        right: 0;
+        text-align: start;
+        margin-top: 25px;
+        height: 700px;
+        overflow: scroll;
+        overflow-x: hidden;
+        width: 325px;
+      }
+      .snippets-title {
+        border: 0.5px dotted grey;
+        display: inline-block;
+        padding: 5px;
+      }
+      .snippet {
+        margin: 5px 50px 5px 0;
+        max-width: 300px;
+      }
+      .snippet-code {
+        margin-top: 0;
+        white-space: pre-wrap;
+      }
+      .snippet-name {
+        font-weight: bold;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/codemirror.min.css"
+      integrity="sha512-CCnciBUnVXwa6IQT9q8EmGcarNit9GdKI5nJnj56B1iu0LuD13Qn/GZ+IUkrZROZaBdutN718NK6mIXdUjZGqg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <div id="c">
+      <div id="editor"></div>
+    </div>
+    <script src="https://unpkg.com/mithril/mithril.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/codemirror.min.js"
+      integrity="sha512-JpMCZgesTWh1iu/8ujURbwkJBgbgFWe3sTNCHdIuEvPwZuuN0nTUr2yawXahpgdEK7FOZUlW254Rp7AyDYJdjg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/mode/javascript/javascript.min.js"
+      integrity="sha512-DJ/Flq7rxJDDhgkO49H/rmidX44jmxWot/ku3c+XXEF9XFal78KIpu7w6jEaQhK4jli1U3/yOH+Rp3cIIEYFPQ=="
+      <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/addon/edit/closebrackets.min.js"
+      integrity="sha512-cCnOU69ESswPmMV3f9TR7WgctoJZliqGbJ8WeLn0VlUrngSsmtVopRf6OG/epbURGfNmY4RY6RzZ/mWkPQ/onw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/addon/edit/closebrackets.min.js"
+      integrity="sha512-cCnOU69ESswPmMV3f9TR7WgctoJZliqGbJ8WeLn0VlUrngSsmtVopRf6OG/epbURGfNmY4RY6RzZ/mWkPQ/onw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.0/addon/edit/matchbrackets.min.js"
+      integrity="sha512-03Ei8A+mDhwF6O/CmXM47U4A9L7TobAxMbPV2Wn5cEbY76lngHQRyvvmnqhJ8IthfoxrRqmtoBxQCxOC7AOeKw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script type="module">
+      /*
+	TODO
+	- Add shorter utitility functions
+	- design
+	- Snippets tool (just copies code to the clipboard, could try and make this a user submittable thing)
+	- refactor initial function.
+      */
+
+      //Constants
+      let width = 150;
+      let height = 75;
+
+      // State
+      let displayString = initDisplay();
+      let savedInputState = localStorage.getItem("inputState");
+      let defaultInputState = `// Click eval to start the animation loop.
+// The loop cycles through each location on the grid and calls the function below.
+
+// The paramaters of the function are:
+// f = current frame
+// x/y = location on the grid
+// m = position of the mouse
+
+({f,x,y,m}) => {
+    const d = ".~|%$#"
+    return d[floor(clamp(0,d.length-1, sin(0.1*x+f/ 20) *10))]
+}`;
+      let inputState = defaultInputState;
+      // savedInputState !== null ? savedInputState : defaultInputState;
+
+      let mouseState = { x: 1, y: 1 };
+      document.addEventListener("mousemove", (e) => {
+        mouseState.x = e.clientX + 1;
+        mouseState.y = e.clientY + 1;
+      });
+
+      // Animation
+      let animationFunction = () => {};
+      let currentAnimation = false;
+      const stopAnimation = () => window.cancelAnimationFrame(currentAnimation);
+      let f = 0;
+      const animate = () => {
+        stopAnimation();
+        function loop() {
+          f += 1;
+          let newStr = "";
+          for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width + 1; x++) {
+              const ctx = { f, x, y, m: mouseState };
+              x === width
+                ? (newStr += "\n")
+                : (newStr += animationFunction(ctx));
+            }
+          }
+          displayString = newStr;
+
+          currentAnimation = window.requestAnimationFrame(loop);
+          m.redraw();
+        }
+        loop();
+      };
+
+      const handleEval = () => {
+        f = 0;
+        // localStorage.setItem("inputState", inputState);
+        animationFunction = eval(inputState);
+        animate();
+      };
+
+      // Components
+      const Display = {
+        view: () => m("pre", { id: "display" }, displayString),
+      };
+
+      const Buttons = {
+        view: () => [
+          m("button", { onclick: handleEval }, "eval"),
+          m("button", { onclick: stopAnimation }, "stop"),
+          m(
+            "button",
+            {
+              onclick: () => {
+                inputState = defaultInputState;
+                syncEditor();
+              },
+            },
+            "reset"
+          ),
+        ],
+      };
+      const CodeInput = {
+        view: () =>
+          m("div", [
+            m(Buttons),
+            m(
+              "textarea",
+              { id: "code-input", oncreate: initCodeMirror },
+              inputState
+            ),
+          ]),
+      };
+
+      let editor;
+      function initCodeMirror({ dom }) {
+        editor = CodeMirror.fromTextArea(dom, {
+          lineWrapping: true,
+          mode: "javascript",
+          autoCloseBrackets: true,
+          matchBrackets: true,
+        });
+        editor.setSize(500, 200);
+        editor.on("change", () => (inputState = editor.getValue()));
+      }
+      function syncEditor() {
+        editor.setValue(inputState);
+      }
+      const snippets = [
+        { name: "simple density string", code: `".~|%$#"` },
+        { name: "darker density string", code: '":8&WM#*oahkbdpqwmZ"' },
+        {
+          name: "flashing",
+          code: `({f,x,y,m}) => {
+    const d = ".~|%$#"
+    return d[floor(clamp(0,d.length-1, sin(f/ 20) *7))]
+}`,
+        },
+        {
+          name: "sine oscilator",
+          code: `({f,x,y,m}) => {
+    const d = ".~|%$#"
+    return d[floor(clamp(0,d.length-1, sin(0.1*x+f/ 20) *10))]
+}`,
+        },
+        {
+          name: "modulated sine oscilator",
+          code: `({f,x,y,m}) => {
+    const d = ".~|%$#"
+    return d[floor(clamp(0,d.length-1, sin(0.1*x+f/ 20) *10
+                        				* cos(x*f /50) *5))]
+}`,
+        },
+        {
+          name: "just dots...",
+          code: `({f,x,y,m}) => {
+    const d = ".~\|%$#"
+    return "."}`,
+        },
+      ];
+
+      const Snippet = {
+        view: ({ attrs: { name, code } }) =>
+          m("div.snippet", [
+            m("span.snippet-name", name),
+            code
+              ? [
+                  m("button", { onclick: () => copyString(code) }, "copy"),
+                  m("pre.snippet-code", code),
+                ]
+              : null,
+          ]),
+      };
+      function copyString(s) {
+        navigator.clipboard.writeText(s);
+      }
+      let showBar = true;
+      const SnippetsBar = {
+        view: () =>
+          m(
+            "div#snippets-bar",
+            m("span.snippets-title", "snippets", [
+              m(
+                "button",
+                { onclick: () => (showBar = !showBar) },
+                "hide / show"
+              ),
+            ]),
+            showBar
+              ? snippets.map(({ name, code }) => m(Snippet, { name, code }))
+              : null
+          ),
+      };
+
+      const App = {
+        view: () => [m(Display), m(CodeInput), m(SnippetsBar)],
+      };
+
+      const root = document.getElementById("c");
+      m.mount(root, App);
+
+      // Keyboard Shortcuts
+      document.addEventListener("keydown", (e) => {
+        const key = e.key;
+        switch (key) {
+          case "Enter":
+            if (e.ctrlKey) handleEval();
+            break;
+          case "Escape":
+            stopAnimation();
+            break;
+        }
+      });
+
+      //Short Rebindings
+      const sin = Math.sin;
+      const cos = Math.cos;
+      const tan = Math.tan;
+      const floor = Math.floor;
+      const round = Math.round;
+      const clamp = R.clamp;
+
+      //Utils
+      function initDisplay() {
+        let arr = [];
+        for (let y = 0; y < height; y++) {
+          let row = [];
+          for (let x = 0; x < width + 1; x++) {
+            x === width ? row.push("\n") : row.push(".");
+          }
+          arr.push(row.join(""));
+        }
+        return arr.join();
+      }
+    </script>
+  </body>
+</html>

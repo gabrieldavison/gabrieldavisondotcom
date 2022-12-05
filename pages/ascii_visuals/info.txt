@@ -1,0 +1,21 @@
+4/10/22
+
+One file generative visual system using text.
+
+Dont try and use this on mobile.
+
+Built this in bed when I had covid.
+
+All one html file, unminified if you want to check the source.
+
+The text box contains a function that is executed for each location on the grid of text.
+
+The function should return a one character string.
+
+You can use the functions arguments to decide what character to display.
+
+Parameters to the function are as follows:
+
+f = current frame
+x/y = location on the grid
+m = position of the mouse
