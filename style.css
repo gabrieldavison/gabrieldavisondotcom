@@ -70,6 +70,8 @@ html {
 h1,h2,h3,h4,h5,h6 {
     margin: 2rem 0 1rem;
 }
+
+
   
 p,ul,ol {
     margin-bottom: 2rem;
@@ -88,16 +90,17 @@ a, a:visited, a:hover, a:active {
     font-size: 3rem;
 }
 
-h2 {
-    margin: 1rem 0 0.5rem; 
-    font-size: 2rem; 
+h1 {
+    font-size: 2rem;
+    font-weight: bold;
 }
 
-#background-canvas {
-    position: absolute;
-    top:0;
-    left:0;
-    height: 100vh;
-    width:100vw;
-    z-index: -10;
+h2 {
+    margin: 1rem 0 0.5rem; 
+    font-size: 1.5rem; 
+    font-weight: bold;
+}
+
+img {
+    max-width: 100%;
 }

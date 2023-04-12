@@ -1,0 +1,39 @@
+<p><link rel="stylesheet" href="/style.css" /></p>
+<h1 id="drum-sample-categorization">12-04-2023: Drum Sample
+Categorization</h1>
+<p><img src="./screenshot.png" alt="Screenshot of Gradio App"/> <a
+href="https://huggingface.co/spaces/mr-lizard/drum-sample-categorization">Try
+live application</a></p>
+<p>Recently I have been working through <a
+href="https://course.fast.ai/">Practical Deep Learning for Coders</a>
+and this project is culmination of my learning from the first two
+lessons.</p>
+<p>The first lesson of the course covers setting up the environment for
+deep learning and provides an introduction to the FastAI library. In
+this lesson you train a model to recognize between two different types
+of image. The second lesson focuses on how to create a user facing
+application using a pretrained model, <a
+href="https://gradio.app/">gradio</a> (a library for building web UI’s
+with python) and <a href="https://huggingface.co/spaces">Hugging Face
+Spaces</a> (a platform for hosting machine learning applications).</p>
+<p>To train the model, I created a Jupyter notebook using that uses <a
+href="https://librosa.org/doc/latest/index.html">librosa</a> to create a
+spectogram image for each audio file. I then used these images to train
+a machine learning model to recognize which type of drum each of these
+samples belogned to. You can see the notebook on google collab <a
+href="https://colab.research.google.com/drive/1A0GDZAcmBueE_V0fDs6M0PRdXkOdEgzN?usp=sharing">here</a>.</p>
+<p>To build the application I created another notebook along with nbdev
+to write the application in a literate style (see <a
+href="https://en.wikipedia.org/wiki/Literate_programming">literate
+programming</a>). You can view the HTML version of the notebook <a
+href="./drum_sample_categorization.html">here</a>. Please note that the
+application wont work through this link as it’s just a static page
+without a backend</p>
+<p>I used Hugging Face Spaces to host the application. The finished
+application can be accessed <a
+href="https://huggingface.co/spaces/mr-lizard/drum-sample-categorization">here</a>.
+It should be noted that the model may have difficulty distinguishing
+between some samples, as it was not trained on a sufficient number of
+drum samples. The next steps will be to retrain the model on a larger
+selection of drum machine samples to improve the accuracy of the models
+predictions.</p>
