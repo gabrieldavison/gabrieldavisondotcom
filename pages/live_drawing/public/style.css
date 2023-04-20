@@ -1,0 +1,59 @@
+
+html,
+body,
+canvas {
+  margin: 0;
+  padding: 0;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+#drawing-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+}
+#scratch-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+.hide {
+  display: none;
+}
+#image-container {
+  position: absolute;
+  opacity: 0.5;
+  background-image: url("/public/ambulance.webp");
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
+}
+
+/* UI */
+#ui {
+  margin:0px 10px 10px 10px;
+}
+#editor {
+  display: block;
+  width: 400px;
+  height: 300px;
+}
+#ui > button {
+  margin-top: 10px;
+}
+.ui-button {
+  margin:10px;
+}
