@@ -3,3 +3,6 @@ npx tiddlywiki wikisrc --listen
 
 # Builds wiki into single html file
 npx tiddlywiki wikisrc --build index
+
+# Converts markdown to html
+pandoc index.md -o index.html

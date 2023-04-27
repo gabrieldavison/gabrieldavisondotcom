@@ -104,3 +104,9 @@ h2 {
 img {
     max-width: 100%;
 }
+
+pre {
+    white-space: pre-wrap;  
+    color:rgb(103, 102, 102);
+    font-family: monospace;
+}
