@@ -47,11 +47,9 @@ For this demo I used the app to generate lissajous curves and then iterated on t
 
 
 
-While there are drawbacks to generating code in this way, such as the slow response time and non-deterministic results, I believe that this approach has a lot of potential in creative coding. 
+There are some issues I have found with generating code this way. The API response times can be really slow (> 30 seconds), sometimes the code is incorrect although this doesn't happen very often and if you iterate on a sketch multiple times occasionally you will end up with unused variables and bits of code that aren't being called. However the generated code is usually correct, and can serve as a starting point for further development and experimentation. I have discovered some interesting p5j.s techniques that I hadn't used before so the project is definitely useful even if it's just for gettng some inspiration. 
 
-The generated code is usually correct, and can serve as a starting point for further development and experimentation. I have discovered some interesting p5j.s techniques that I hadn't used before so the project is definitely useful even if it's just for gettng some inspiration. 
-
-Looking to the future, I plan to explore the use of other creative coding frameworks, such as Hydra, A-frame, and Three.js. I also want to add the ability to save sketches and return to earlier versions of a sketch. I hope to host a version of the project that people can use themselves without having to download the whole project, although I want to do this in a way that limits usage so that I don't run up an expensive bill for the usage of the API.
+Looking to the future, I want to explore the use of other creative coding frameworks, like [Hydra](https://hydra.ojack.xyz/), [A-frame](https://aframe.io/), and [Three.js](https://threejs.org/). I also want to add the ability to save sketches and return to earlier versions of a sketch. I also want to host a version of the app that people can use themselves without having to download the whole project, although I want to do this in a way that limits usage so that I don't run up an expensive bill for the usage of the API.
 
 You can find the project repo [here](https://github.com/gabrieldavison/creative_code.gpt).
 
